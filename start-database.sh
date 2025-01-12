@@ -9,47 +9,25 @@
 
 # On Linux and macOS you can run this script directly - `./start-database.sh`
 
-DB_CONTAINER_NAME="polyglot-postgres"
-
 if ! [ -x "$(command -v docker)" ]; then
   echo -e "Docker is not installed. Please install docker and try again.\nDocker install guide: https://docs.docker.com/engine/install/"
   exit 1
 fi
 
-if [ "$(docker ps -q -f name=$DB_CONTAINER_NAME)" ]; then
-  echo "Database container '$DB_CONTAINER_NAME' already running"
-  exit 0
-fi
+echo "Starting database container..."
+docker compose up -d db
 
-if [ "$(docker ps -q -a -f name=$DB_CONTAINER_NAME)" ]; then
-  docker start "$DB_CONTAINER_NAME"
-  echo "Existing database container '$DB_CONTAINER_NAME' started"
-  exit 0
-fi
-
-# import env variables from .env
-set -a
-source .env
-
-DB_PASSWORD=$(echo "$DATABASE_URL" | awk -F':' '{print $3}' | awk -F'@' '{print $1}')
-DB_PORT=$(echo "$DATABASE_URL" | awk -F':' '{print $4}' | awk -F'\/' '{print $1}')
-
-if [ "$DB_PASSWORD" = "password" ]; then
-  echo "You are using the default database password"
-  read -p "Should we generate a random password for you? [y/N]: " -r REPLY
-  if ! [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Please set a password in the .env file and try again"
-    exit 1
+echo "Waiting for database to be healthy..."
+# Loop until the database service is healthy
+for i in $(seq 1 60); do
+  HEALTH_STATUS=$(docker compose ps -q db | xargs docker inspect -f {{.State.Health.Status}} 2>/dev/null || true)
+  if [ "$HEALTH_STATUS" = "healthy" ]; then
+    echo "Database is healthy!"
+    exit 0
   fi
-  # Generate a random URL-safe password
-  DB_PASSWORD=$(openssl rand -base64 12 | tr '+/' '-_')
-  sed -i -e "s#:password@#:$DB_PASSWORD@#" .env
-fi
+  echo "Database status: $HEALTH_STATUS. Waiting 1 second..."
+  sleep 1
+done
 
-docker run -d \
-  --name $DB_CONTAINER_NAME \
-  -e POSTGRES_USER="postgres" \
-  -e POSTGRES_PASSWORD="$DB_PASSWORD" \
-  -e POSTGRES_DB=polyglot \
-  -p "$DB_PORT":5432 \
-  docker.io/postgres && echo "Database container '$DB_CONTAINER_NAME' was successfully created"
+echo "Error: Database did not become healthy in time."
+exit 1
