@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   pgTableCreator,
   serial,
@@ -19,6 +19,10 @@ export const concepts = createTable("concept", {
   updatedAt: timestamp("updatedAt", { withTimezone: true }),
 });
 
+export const conceptsRelations = relations(concepts, ({ many }) => ({
+  snippets: many(snippets),
+}));
+
 export const languages = createTable("language", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 256 }).notNull(),
@@ -27,6 +31,10 @@ export const languages = createTable("language", {
     .notNull(),
   updatedAt: timestamp("updatedAt", { withTimezone: true }),
 });
+
+export const languagesRelations = relations(languages, ({ many }) => ({
+  snippets: many(snippets),
+}));
 
 export const snippets = createTable("snippet", {
   id: serial("id").primaryKey(),
@@ -42,3 +50,14 @@ export const snippets = createTable("snippet", {
     .notNull(),
   updatedAt: timestamp("updatedAt", { withTimezone: true }),
 });
+
+export const snippetsRelations = relations(snippets, ({ one }) => ({
+  concept: one(concepts, {
+    fields: [snippets.conceptId],
+    references: [concepts.id],
+  }),
+  language: one(languages, {
+    fields: [snippets.languageId],
+    references: [languages.id],
+  }),
+}));
