@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ConceptList } from "./concept-list";
 import { ConceptViewer } from "./concept-viewer";
+import { CompareView } from "./compare-view";
 
 interface Concept {
   id: number;
@@ -19,9 +20,23 @@ export function PolyglotApp({ initialConcepts }: PolyglotAppProps) {
   const [selectedConceptId, setSelectedConceptId] = useState<number | null>(
     initialConcepts[0]?.id ?? null,
   );
-  const [compareLanguageId, setCompareLanguageId] = useState<number | null>(
-    null,
-  );
+  const [compareState, setCompareState] = useState<{
+    conceptId: number;
+    languageId: number;
+  } | null>(null);
+
+  const handleCompare = (languageId: number) => {
+    if (selectedConceptId) {
+      setCompareState({
+        conceptId: selectedConceptId,
+        languageId,
+      });
+    }
+  };
+
+  const handleCloseCompare = () => {
+    setCompareState(null);
+  };
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -42,7 +57,7 @@ export function PolyglotApp({ initialConcepts }: PolyglotAppProps) {
         {selectedConceptId ? (
           <ConceptViewer
             conceptId={selectedConceptId}
-            onCompare={setCompareLanguageId}
+            onCompare={handleCompare}
           />
         ) : (
           <div className="rounded-lg bg-white p-6 shadow-md">
@@ -51,19 +66,21 @@ export function PolyglotApp({ initialConcepts }: PolyglotAppProps) {
         )}
       </main>
 
-      <aside className="w-80 bg-gray-200 p-6">
-        <h2 className="mb-4 text-2xl font-bold">Compare</h2>
-        {compareLanguageId ? (
-          <div className="rounded-lg bg-white p-4 shadow">
+      <aside className="w-96 bg-gray-50 shadow-lg">
+        {compareState ? (
+          <CompareView
+            conceptId={compareState.conceptId}
+            currentLanguageId={compareState.languageId}
+            onClose={handleCloseCompare}
+          />
+        ) : (
+          <div className="p-6">
+            <h2 className="mb-4 text-2xl font-bold">Compare</h2>
             <p className="text-sm text-gray-600">
-              Comparison view coming soon...
+              Click "Compare" on a code snippet to see differences between
+              languages
             </p>
           </div>
-        ) : (
-          <p className="text-sm text-gray-600">
-            Click "Compare" on a code snippet to see differences between
-            languages
-          </p>
         )}
       </aside>
     </div>
