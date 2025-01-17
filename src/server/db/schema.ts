@@ -1,4 +1,4 @@
-import { relations, sql } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 import {
   pgTableCreator,
   serial,
@@ -11,12 +11,14 @@ import {
 export const createTable = pgTableCreator((name) => `polyglot_${name}`);
 
 export const concepts = createTable("concept", {
-  id: serial("id").primaryKey(),
-  name: varchar("name", { length: 256 }).notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  updatedAt: timestamp("updatedAt", { withTimezone: true }),
+  id: serial().primaryKey(),
+  slug: varchar({ length: 256 }).notNull().unique(),
+  title: varchar({ length: 256 }).notNull(),
+  category: varchar({ length: 128 }).notNull(),
+  difficulty: varchar({ length: 32 }).notNull(),
+  tags: text().array(),
+  createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp({ withTimezone: true }),
 });
 
 export const conceptsRelations = relations(concepts, ({ many }) => ({
@@ -24,12 +26,12 @@ export const conceptsRelations = relations(concepts, ({ many }) => ({
 }));
 
 export const languages = createTable("language", {
-  id: serial("id").primaryKey(),
-  name: varchar("name", { length: 256 }).notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  updatedAt: timestamp("updatedAt", { withTimezone: true }),
+  id: serial().primaryKey(),
+  name: varchar({ length: 256 }).notNull(),
+  slug: varchar({ length: 256 }).notNull().unique(),
+  color: varchar({ length: 7 }).notNull(),
+  createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp({ withTimezone: true }),
 });
 
 export const languagesRelations = relations(languages, ({ many }) => ({
@@ -37,18 +39,16 @@ export const languagesRelations = relations(languages, ({ many }) => ({
 }));
 
 export const snippets = createTable("snippet", {
-  id: serial("id").primaryKey(),
-  conceptId: integer("concept_id")
-    .references(() => concepts.id)
-    .notNull(),
-  languageId: integer("language_id")
-    .references(() => languages.id)
-    .notNull(),
-  code: text("code").notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  updatedAt: timestamp("updatedAt", { withTimezone: true }),
+  id: serial().primaryKey(),
+  conceptId: integer()
+    .notNull()
+    .references(() => concepts.id, { onDelete: "cascade" }),
+  languageId: integer()
+    .notNull()
+    .references(() => languages.id, { onDelete: "cascade" }),
+  code: text().notNull(),
+  createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp({ withTimezone: true }),
 });
 
 export const snippetsRelations = relations(snippets, ({ one }) => ({

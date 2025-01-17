@@ -1,8 +1,5 @@
-import { api } from "@/trpc/server";
-import { PolyglotApp } from "./_components/polyglot-app";
+import { TerminalApp } from "./_components/terminal-app";
 
-export default async function Home() {
-  const concepts = await api.concept.getAll();
-
-  return <PolyglotApp initialConcepts={concepts} />;
+export default function Home() {
+  return <TerminalApp />;
 }

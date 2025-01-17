@@ -5,38 +5,51 @@ import { eq, asc } from "drizzle-orm";
 
 export const conceptRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {
-    return await ctx.db.select().from(concepts).orderBy(asc(concepts.name));
+    const allConcepts = await ctx.db.query.concepts.findMany({
+      orderBy: asc(concepts.title),
+      with: {
+        snippets: {
+          with: {
+            language: true,
+          },
+        },
+      },
+    });
+    return allConcepts;
   }),
+
+  getBySlug: publicProcedure
+    .input(z.object({ slug: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const concept = await ctx.db.query.concepts.findFirst({
+        where: eq(concepts.slug, input.slug),
+        with: {
+          snippets: {
+            with: {
+              language: true,
+            },
+          },
+        },
+      });
+
+      return concept ?? null;
+    }),
 
   getById: publicProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ ctx, input }) => {
-      const concept = await ctx.db
-        .select()
-        .from(concepts)
-        .where(eq(concepts.id, input.id))
-        .limit(1);
+      const concept = await ctx.db.query.concepts.findFirst({
+        where: eq(concepts.id, input.id),
+        with: {
+          snippets: {
+            with: {
+              language: true,
+            },
+          },
+        },
+      });
 
-      if (!concept[0]) return null;
-
-      const conceptSnippets = await ctx.db
-        .select({
-          id: snippets.id,
-          conceptId: snippets.conceptId,
-          languageId: snippets.languageId,
-          code: snippets.code,
-          createdAt: snippets.createdAt,
-          updatedAt: snippets.updatedAt,
-          language: languages,
-        })
-        .from(snippets)
-        .leftJoin(languages, eq(snippets.languageId, languages.id))
-        .where(eq(snippets.conceptId, input.id));
-
-      return {
-        ...concept[0],
-        snippets: conceptSnippets,
-      };
+      return concept ?? null;
     }),
 
   getAllLanguages: publicProcedure.query(async ({ ctx }) => {
