@@ -41,13 +41,7 @@ export function DiffView({
           {/* Left Language Dropdown */}
           <Select value={leftSnippet.language.slug} onValueChange={onLeftLanguageChange}>
             <SelectTrigger className="w-auto border-0 bg-transparent p-0 text-base font-bold text-primary">
-              <div className="flex items-center gap-3">
-                <div
-                  className="h-4 w-4 rounded-full"
-                  style={{ backgroundColor: leftSnippet.language.color }}
-                />
-                <SelectValue />
-              </div>
+              <SelectValue />
             </SelectTrigger>
             <SelectContent className="font-mono">
               {leftLanguages.map((lang) => (
@@ -72,14 +66,8 @@ export function DiffView({
               value={rightSnippet.language.slug}
               onValueChange={onRightLanguageChange}
             >
-              <SelectTrigger className="w-auto border-0 bg-transparent p-0 pr-6 text-base font-bold text-accent">
-                <div className="flex items-center gap-3">
-                  <SelectValue />
-                  <div
-                    className="h-4 w-4 rounded-full"
-                    style={{ backgroundColor: rightSnippet.language.color }}
-                  />
-                </div>
+              <SelectTrigger className="w-auto border-0 bg-transparent p-0 text-base font-bold text-accent">
+                <SelectValue />
               </SelectTrigger>
               <SelectContent className="font-mono">
                 {rightLanguages.map((lang) => (

@@ -41,13 +41,7 @@ export function CodeView({ snippet, availableLanguages, onLanguageChange, onComp
           {/* Language Dropdown */}
           <Select value={snippet.language.slug} onValueChange={onLanguageChange}>
             <SelectTrigger className="w-auto border-0 bg-transparent p-0 text-base font-bold text-primary">
-              <div className="flex items-center gap-3">
-                <div
-                  className="h-4 w-4 rounded-full"
-                  style={{ backgroundColor: snippet.language.color }}
-                />
-                <SelectValue />
-              </div>
+              <SelectValue />
             </SelectTrigger>
             <SelectContent className="font-mono">
               {availableLanguages.map((lang) => (

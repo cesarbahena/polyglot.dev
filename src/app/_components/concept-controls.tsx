@@ -26,54 +26,48 @@ export function ConceptControls({
 }: ConceptControlsProps) {
   return (
     <div className="mb-8 space-y-6">
-      {/* Concept Title as Dropdown */}
+      {/* Concept Title as Dropdown with Category and Difficulty */}
       <div className="text-center">
         <Select
           value={selectedConceptSlug ?? ""}
           onValueChange={onConceptChange}
         >
           <SelectTrigger className="mx-auto w-auto min-w-[400px] border-primary/30 bg-transparent text-4xl font-bold text-primary">
-            <SelectValue placeholder="Select concept..." />
+            {selectedConcept ? (
+              <div className="flex items-center gap-3">
+                <span className="text-xs text-muted-foreground">
+                  [{selectedConcept.category}]
+                </span>
+                <SelectValue />
+                <span className="text-xs text-muted-foreground">
+                  [{selectedConcept.difficulty}]
+                </span>
+              </div>
+            ) : (
+              <SelectValue placeholder="Select concept..." />
+            )}
           </SelectTrigger>
           <SelectContent className="font-mono">
             {concepts.map((concept) => (
               <SelectItem key={concept.id} value={concept.slug}>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground">
-                    [{concept.category}]
-                  </span>
-                  <span>{concept.title}</span>
-                </div>
+                {concept.title}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
 
-      {/* Metadata Row: Category, Tags, Difficulty */}
-      {selectedConcept && (
-        <div className="flex items-center justify-between gap-4">
-          {/* Left: Category */}
-          <span className="rounded bg-accent/20 px-3 py-1 text-xs font-medium text-accent-foreground">
-            {selectedConcept.category}
-          </span>
-
-          {/* Center: Tags */}
-          <div className="flex flex-1 items-center justify-center gap-2">
-            {selectedConcept.tags?.map((tag) => (
-              <span
-                key={tag}
-                className="rounded bg-muted px-2 py-1 text-xs text-muted-foreground"
-              >
-                #{tag}
-              </span>
-            ))}
-          </div>
-
-          {/* Right: Difficulty */}
-          <span className="rounded bg-primary/20 px-3 py-1 text-xs font-medium text-primary">
-            {selectedConcept.difficulty}
-          </span>
+      {/* Tags Only - Centered */}
+      {selectedConcept && selectedConcept.tags && selectedConcept.tags.length > 0 && (
+        <div className="flex items-center justify-center gap-2">
+          {selectedConcept.tags.map((tag) => (
+            <span
+              key={tag}
+              className="rounded bg-muted px-2 py-1 text-xs text-muted-foreground"
+            >
+              #{tag}
+            </span>
+          ))}
         </div>
       )}
     </div>
