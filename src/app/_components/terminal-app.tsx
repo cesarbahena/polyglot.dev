@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { api } from "@/trpc/react";
 import { TerminalHeader } from "./terminal-header";
+import { ConceptControls } from "./concept-controls";
 import { CodeView } from "./code-view";
 import { DiffView } from "./diff-view";
 
@@ -18,6 +19,12 @@ export function TerminalApp() {
     { enabled: !!selectedConceptSlug }
   );
 
+  const availableLanguages = concept
+    ? languages?.filter((lang) =>
+        concept.snippets.some((s) => s.languageId === lang.id)
+      ) ?? []
+    : [];
+
   const leftSnippet = concept?.snippets.find(
     (s) => s.language.slug === leftLangSlug
   );
@@ -27,20 +34,34 @@ export function TerminalApp() {
 
   const showDiff = leftSnippet && rightSnippet;
 
+  // When concept changes, auto-select first language
+  const handleConceptChange = (slug: string) => {
+    setSelectedConceptSlug(slug);
+    setLeftLangSlug(null);
+    setRightLangSlug(null);
+  };
+
+  // Auto-select first language when concept loads
+  if (concept && !leftLangSlug && availableLanguages.length > 0) {
+    setLeftLangSlug(availableLanguages[0]!.slug);
+  }
+
   return (
     <div className="flex min-h-screen flex-col bg-background font-mono text-foreground">
-      <TerminalHeader
-        concepts={concepts ?? []}
-        languages={languages ?? []}
-        selectedConceptSlug={selectedConceptSlug}
-        leftLangSlug={leftLangSlug}
-        rightLangSlug={rightLangSlug}
-        onConceptChange={setSelectedConceptSlug}
-        onLeftLangChange={setLeftLangSlug}
-        onRightLangChange={setRightLangSlug}
-      />
+      <TerminalHeader />
 
-      <main className="flex flex-1 items-center justify-center p-8">
+      <main className="flex flex-1 flex-col items-center p-8">
+        {/* Concept Controls */}
+        <div className="w-full max-w-7xl">
+          <ConceptControls
+            concepts={concepts ?? []}
+            selectedConcept={concepts?.find((c) => c.slug === selectedConceptSlug)}
+            selectedConceptSlug={selectedConceptSlug}
+            onConceptChange={handleConceptChange}
+          />
+        </div>
+
+        {/* Code Display */}
         {!selectedConceptSlug && (
           <div className="text-center text-muted-foreground">
             <div className="mb-4 text-6xl">▹</div>
@@ -48,17 +69,12 @@ export function TerminalApp() {
           </div>
         )}
 
-        {selectedConceptSlug && !leftLangSlug && (
-          <div className="text-center text-muted-foreground">
-            <div className="mb-4 text-6xl">▹</div>
-            <p>Select a language</p>
-          </div>
-        )}
-
         {leftSnippet && !rightSnippet && (
           <CodeView
             snippet={leftSnippet}
-            concept={concept!}
+            availableLanguages={availableLanguages}
+            onLanguageChange={setLeftLangSlug}
+            onCompareLanguageChange={setRightLangSlug}
           />
         )}
 
@@ -66,7 +82,9 @@ export function TerminalApp() {
           <DiffView
             leftSnippet={leftSnippet}
             rightSnippet={rightSnippet}
-            concept={concept!}
+            availableLanguages={availableLanguages}
+            onLeftLanguageChange={setLeftLangSlug}
+            onRightLanguageChange={setRightLangSlug}
           />
         )}
       </main>
