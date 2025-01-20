@@ -3,9 +3,16 @@
 import { useState } from "react";
 import { api } from "@/trpc/react";
 import { TerminalHeader } from "./terminal-header";
-import { ConceptControls } from "./concept-controls";
+import { FileTreeSidebar } from "./file-tree-sidebar";
+import { Breadcrumb } from "./breadcrumb";
+import { LanguageTabs } from "./language-tabs";
 import { CodeView } from "./code-view";
 import { DiffView } from "./diff-view";
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from "@/components/ui/resizable";
 
 export function TerminalApp() {
   const [selectedConceptSlug, setSelectedConceptSlug] = useState<string | null>(null);
@@ -47,47 +54,76 @@ export function TerminalApp() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-background font-mono text-foreground">
+    <div className="flex h-screen flex-col bg-background font-mono text-foreground">
       <TerminalHeader />
 
-      <main className="flex flex-1 flex-col items-center p-8">
-        {/* Concept Controls */}
-        <div className="w-full max-w-7xl">
-          <ConceptControls
+      <ResizablePanelGroup direction="horizontal" className="flex-1">
+        {/* Sidebar Panel */}
+        <ResizablePanel defaultSize={20} minSize={15} maxSize={40}>
+          <FileTreeSidebar
             concepts={concepts ?? []}
-            selectedConcept={concepts?.find((c) => c.slug === selectedConceptSlug)}
             selectedConceptSlug={selectedConceptSlug}
-            onConceptChange={handleConceptChange}
+            onConceptSelect={handleConceptChange}
           />
-        </div>
+        </ResizablePanel>
 
-        {/* Code Display */}
-        {!selectedConceptSlug && (
-          <div className="text-center text-muted-foreground">
-            <div className="mb-4 text-6xl">▹</div>
-            <p>Select a concept to begin</p>
+        <ResizableHandle withHandle />
+
+        {/* Main Content Panel */}
+        <ResizablePanel defaultSize={80}>
+          <div className="flex h-full flex-col">
+            {!selectedConceptSlug && (
+              <div className="flex flex-1 items-center justify-center text-center text-muted-foreground">
+                <div>
+                  <div className="mb-4 text-6xl">▹</div>
+                  <p>Select a concept to begin</p>
+                </div>
+              </div>
+            )}
+
+            {concept && (
+              <>
+                <Breadcrumb concept={concept} />
+
+                {leftSnippet && !rightSnippet && (
+                  <>
+                    <LanguageTabs
+                      mode="single"
+                      languages={availableLanguages}
+                      activeLanguage={leftLangSlug!}
+                      onLanguageChange={setLeftLangSlug}
+                      onSplitView={setRightLangSlug}
+                    />
+                    <div className="flex-1 overflow-auto">
+                      <CodeView snippet={leftSnippet} />
+                    </div>
+                  </>
+                )}
+
+                {showDiff && (
+                  <>
+                    <LanguageTabs
+                      mode="comparison"
+                      languages={availableLanguages}
+                      leftLanguage={leftLangSlug!}
+                      rightLanguage={rightLangSlug!}
+                      onLeftLanguageChange={setLeftLangSlug}
+                      onRightLanguageChange={setRightLangSlug}
+                      onClose={() => setRightLangSlug(null)}
+                    />
+                    <div className="flex-1 overflow-auto">
+                      <DiffView
+                        leftSnippet={leftSnippet}
+                        rightSnippet={rightSnippet}
+                      />
+                    </div>
+                  </>
+                )}
+              </>
+            )}
           </div>
-        )}
-
-        {leftSnippet && !rightSnippet && (
-          <CodeView
-            snippet={leftSnippet}
-            availableLanguages={availableLanguages}
-            onLanguageChange={setLeftLangSlug}
-            onCompareLanguageChange={setRightLangSlug}
-          />
-        )}
-
-        {showDiff && (
-          <DiffView
-            leftSnippet={leftSnippet}
-            rightSnippet={rightSnippet}
-            availableLanguages={availableLanguages}
-            onLeftLanguageChange={setLeftLangSlug}
-            onRightLanguageChange={setRightLangSlug}
-          />
-        )}
-      </main>
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </div>
   );
 }
