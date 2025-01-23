@@ -3,13 +3,6 @@
 import { X, Columns2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { type RouterOutputs } from "@/trpc/react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
 
 type Language = RouterOutputs["concept"]["getAllLanguages"][number];
 
@@ -65,34 +58,13 @@ export function LanguageTabs(props: LanguageTabsProps) {
 
         {props.onSplitView && compareLanguages.length > 0 && (
           <div className="border-l border-border px-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="gap-2 text-muted-foreground hover:text-foreground"
-                >
-                  <Columns2 className="h-4 w-4" />
-                  <span className="text-xs">Split</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="font-mono">
-                {compareLanguages.map((lang) => (
-                  <DropdownMenuItem
-                    key={lang.slug}
-                    onClick={() => props.onSplitView?.(lang.slug)}
-                  >
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="h-3 w-3 rounded-full"
-                        style={{ backgroundColor: lang.color }}
-                      />
-                      {lang.name}
-                    </div>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <button
+              onClick={() => props.onSplitView?.(compareLanguages[0]!.slug)}
+              className="rounded p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              aria-label="Split view"
+            >
+              <Columns2 className="h-4 w-4" />
+            </button>
           </div>
         )}
       </div>
@@ -100,19 +72,34 @@ export function LanguageTabs(props: LanguageTabsProps) {
   }
 
   // Comparison mode
-  const leftLanguages = props.languages;
-  const rightLanguages = props.languages.filter(
-    (lang) => lang.slug !== props.leftLanguage
-  );
+  const handleLeftLanguageClick = (slug: string) => {
+    if (slug === props.rightLanguage) {
+      // Swap: set right to current left, and left to clicked language
+      props.onRightLanguageChange(props.leftLanguage);
+      props.onLeftLanguageChange(slug);
+    } else {
+      props.onLeftLanguageChange(slug);
+    }
+  };
+
+  const handleRightLanguageClick = (slug: string) => {
+    if (slug === props.leftLanguage) {
+      // Swap: set left to current right, and right to clicked language
+      props.onLeftLanguageChange(props.rightLanguage);
+      props.onRightLanguageChange(slug);
+    } else {
+      props.onRightLanguageChange(slug);
+    }
+  };
 
   return (
     <div className="flex items-center border-b border-border bg-background/50">
       {/* Left tab group */}
       <div className="flex flex-1 items-center gap-1 overflow-x-auto px-4">
-        {leftLanguages.map((lang) => (
+        {props.languages.map((lang) => (
           <button
             key={lang.slug}
-            onClick={() => props.onLeftLanguageChange(lang.slug)}
+            onClick={() => handleLeftLanguageClick(lang.slug)}
             className={cn(
               "flex items-center gap-2 border-b-2 px-4 py-2.5 transition-all",
               "hover:text-foreground",
@@ -130,15 +117,15 @@ export function LanguageTabs(props: LanguageTabsProps) {
         ))}
       </div>
 
-      {/* VS separator */}
-      <div className="px-3 text-xs text-muted-foreground">VS</div>
+      {/* Separator */}
+      <div className="h-6 w-px bg-border" />
 
       {/* Right tab group */}
       <div className="flex flex-1 items-center gap-1 overflow-x-auto px-4">
-        {rightLanguages.map((lang) => (
+        {props.languages.map((lang) => (
           <button
             key={lang.slug}
-            onClick={() => props.onRightLanguageChange(lang.slug)}
+            onClick={() => handleRightLanguageClick(lang.slug)}
             className={cn(
               "flex items-center gap-2 border-b-2 px-4 py-2.5 transition-all",
               "hover:text-foreground",
