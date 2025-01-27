@@ -8,7 +8,6 @@ import { FileTreeSidebar } from "./file-tree-sidebar";
 import { LanguageTabs } from "./language-tabs";
 import { CodeView } from "./code-view";
 import { DiffView } from "./diff-view";
-import { CommandPalette } from "./command-palette";
 import { cn } from "@/lib/utils";
 
 export function TerminalApp() {
@@ -16,7 +15,6 @@ export function TerminalApp() {
   const [leftLangSlug, setLeftLangSlug] = useState<string | null>(null);
   const [rightLangSlug, setRightLangSlug] = useState<string | null>(null);
   const [activityBarView, setActivityBarView] = useState<'explorer' | null>('explorer');
-  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
 
   const { data: concepts } = api.concept.getAll.useQuery();
   const { data: languages } = api.concept.getAllLanguages.useQuery();
@@ -52,17 +50,10 @@ export function TerminalApp() {
     setLeftLangSlug(availableLanguages[0]!.slug);
   }
 
-  // Keyboard shortcuts
+  // Keyboard shortcut: Toggle Explorer
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Command Palette: Ctrl+Shift+P / Cmd+Shift+P
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'p') {
-        e.preventDefault();
-        setCommandPaletteOpen(true);
-      }
-
-      // Toggle Explorer: Ctrl+B / Cmd+B
-      if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === 'b') {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
         e.preventDefault();
         setActivityBarView(prev => prev === 'explorer' ? null : 'explorer');
       }
@@ -75,7 +66,7 @@ export function TerminalApp() {
 
   return (
     <div className="flex h-screen flex-col bg-background font-mono text-foreground">
-      <TerminalHeader onOpenCommandPalette={() => setCommandPaletteOpen(true)} />
+      <TerminalHeader />
 
       <div className="flex flex-1 overflow-hidden">
         {/* Activity Bar */}
@@ -169,12 +160,6 @@ export function TerminalApp() {
           )}
         </main>
       </div>
-
-      {/* Command Palette */}
-      <CommandPalette
-        isOpen={commandPaletteOpen}
-        onClose={() => setCommandPaletteOpen(false)}
-      />
     </div>
   );
 }

@@ -1,10 +1,7 @@
 "use client";
 
 import { MenuDropdown, type MenuItem } from "./menu-dropdown";
-
-interface TerminalHeaderProps {
-  onOpenCommandPalette: () => void;
-}
+import { CommandPalette } from "./command-palette";
 
 // Menu items
 const languagesLinks: MenuItem[] = [
@@ -44,10 +41,10 @@ const helpLinks: MenuItem[] = [
   { label: "About", href: "#" },
 ];
 
-export function TerminalHeader({ onOpenCommandPalette }: TerminalHeaderProps) {
+export function TerminalHeader() {
   return (
     <header className="border-b border-border bg-card">
-      <div className="flex items-center px-4 py-1.5">
+      <div className="relative flex items-center px-4 py-1.5">
         {/* Icon only */}
         <div className="text-lg font-bold text-primary">▹</div>
 
@@ -60,16 +57,10 @@ export function TerminalHeader({ onOpenCommandPalette }: TerminalHeaderProps) {
           <MenuDropdown label="Help" items={helpLinks} />
         </nav>
 
-        {/* Spacer */}
-        <div className="flex-1" />
-
-        {/* Command palette hint */}
-        <button
-          onClick={onOpenCommandPalette}
-          className="rounded px-2 py-1 text-xs text-muted-foreground hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary"
-        >
-          Ctrl+Shift+P
-        </button>
+        {/* Command Palette Search Bar - Absolutely Centered */}
+        <div className="absolute left-1/2 -translate-x-1/2">
+          <CommandPalette />
+        </div>
       </div>
     </header>
   );
