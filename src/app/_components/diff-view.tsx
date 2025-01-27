@@ -17,12 +17,21 @@ export function DiffView({ leftSnippet, rightSnippet }: DiffViewProps) {
         oldValue={leftSnippet.code}
         newValue={rightSnippet.code}
         splitView={true}
-        leftTitle={leftSnippet.language.name}
-        rightTitle={rightSnippet.language.name}
         useDarkTheme={true}
         styles={{
+          variables: {
+            dark: {
+              diffViewerBackground: "transparent",
+              gutterBackground: "transparent",
+              addedBackground: "transparent",
+              removedBackground: "transparent",
+              emptyLineBackground: "transparent",
+              wordAddedBackground: "rgba(100, 200, 100, 0.2)",
+              wordRemovedBackground: "rgba(255, 100, 100, 0.2)",
+            },
+          },
           diffContainer: {
-            fontSize: "0.9rem",
+            fontSize: "0.95rem",
             lineHeight: "1.6",
             fontFamily: "JetBrains Mono, Fira Code, Consolas, monospace",
           },
@@ -37,7 +46,7 @@ export function DiffView({ leftSnippet, rightSnippet }: DiffViewProps) {
             padding: "0.25rem",
           },
           wordDiff: {
-            padding: "0.125rem 0.25rem",
+            padding: "0",
           },
         }}
         hideLineNumbers={false}
