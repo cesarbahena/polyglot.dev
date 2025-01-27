@@ -20,7 +20,7 @@ const languageMap: Record<string, string> = {
 
 export function CodeView({ snippet }: CodeViewProps) {
   return (
-    <div className="p-6">
+    <div className="p-2">
       <SyntaxHighlighter
         language={languageMap[snippet.language.slug] ?? "javascript"}
         style={vscDarkPlus}

@@ -46,7 +46,7 @@ export function LanguageTabs(props: LanguageTabsProps) {
                 key={lang.slug}
                 onClick={() => props.onLanguageChange(lang.slug)}
                 className={cn(
-                  "flex items-center gap-2 border-b-2 px-4 py-2.5 transition-all",
+                  "flex items-center gap-2 border-b-2 px-4 py-2 transition-all",
                   "hover:text-foreground",
                   props.activeLanguage === lang.slug
                     ? "border-primary text-primary font-medium"
@@ -113,7 +113,7 @@ export function LanguageTabs(props: LanguageTabsProps) {
               key={lang.slug}
               onClick={() => handleLeftLanguageClick(lang.slug)}
               className={cn(
-                "flex items-center gap-2 border-b-2 px-4 py-2.5 transition-all",
+                "flex items-center gap-2 border-b-2 px-4 py-2 transition-all",
                 "hover:text-foreground",
                 props.leftLanguage === lang.slug
                   ? "border-primary text-primary font-medium"
@@ -139,7 +139,7 @@ export function LanguageTabs(props: LanguageTabsProps) {
               key={lang.slug}
               onClick={() => handleRightLanguageClick(lang.slug)}
               className={cn(
-                "flex items-center gap-2 border-b-2 px-4 py-2.5 transition-all",
+                "flex items-center gap-2 border-b-2 px-4 py-2 transition-all",
                 "hover:text-foreground",
                 props.rightLanguage === lang.slug
                   ? "border-accent text-accent font-medium"

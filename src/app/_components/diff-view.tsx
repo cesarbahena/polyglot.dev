@@ -12,7 +12,7 @@ interface DiffViewProps {
 
 export function DiffView({ leftSnippet, rightSnippet }: DiffViewProps) {
   return (
-    <div className="overflow-x-auto p-6">
+    <div className="overflow-x-auto p-2">
       <ReactDiffViewer
         oldValue={leftSnippet.code}
         newValue={rightSnippet.code}

@@ -48,7 +48,7 @@ export function FileTreeSidebar({
 
   return (
     <div className="flex h-full w-full flex-col border-r border-border bg-card">
-      <div className="border-b border-border px-4 py-3">
+      <div className="border-b border-border px-4 py-2">
         <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           Explorer
         </h2>
