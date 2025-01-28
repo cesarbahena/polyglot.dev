@@ -43,14 +43,19 @@ export function DiffView({ leftSnippet, rightSnippet }: DiffViewProps) {
             fontFamily: "JetBrains Mono, Fira Code, Consolas, monospace",
             fontWeight: "normal",
             borderSpacing: "0",
+            pre: {
+              lineHeight: "1.6",
+            },
           },
           tableCell: {
             padding: "0",
             verticalAlign: "top",
+            lineHeight: "1.6",
           },
           line: {
             padding: "0",
             fontWeight: "normal",
+            lineHeight: "1.6",
           },
           gutter: {
             padding: "0 10px 0 0",
@@ -71,6 +76,7 @@ export function DiffView({ leftSnippet, rightSnippet }: DiffViewProps) {
           contentText: {
             padding: "0",
             fontWeight: "normal",
+            lineHeight: "1.6",
           },
         }}
         hideLineNumbers={false}
