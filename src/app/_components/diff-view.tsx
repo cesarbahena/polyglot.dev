@@ -12,7 +12,7 @@ interface DiffViewProps {
 
 export function DiffView({ leftSnippet, rightSnippet }: DiffViewProps) {
   return (
-    <div className="overflow-x-auto p-2">
+    <div className="p-2">
       <ReactDiffViewer
         oldValue={leftSnippet.code}
         newValue={rightSnippet.code}
@@ -26,6 +26,13 @@ export function DiffView({ leftSnippet, rightSnippet }: DiffViewProps) {
               addedBackground: "transparent",
               removedBackground: "transparent",
               emptyLineBackground: "transparent",
+              addedGutterBackground: "transparent",
+              removedGutterBackground: "transparent",
+              gutterColor: "#858585",
+              addedGutterColor: "#858585",
+              removedGutterColor: "#858585",
+              codeFoldGutterBackground: "transparent",
+              codeFoldBackground: "transparent",
               wordAddedBackground: "rgba(100, 200, 100, 0.2)",
               wordRemovedBackground: "rgba(255, 100, 100, 0.2)",
             },
@@ -34,19 +41,36 @@ export function DiffView({ leftSnippet, rightSnippet }: DiffViewProps) {
             fontSize: "0.95rem",
             lineHeight: "1.6",
             fontFamily: "JetBrains Mono, Fira Code, Consolas, monospace",
+            fontWeight: "normal",
+            borderSpacing: "0",
+          },
+          tableCell: {
+            padding: "0",
+            verticalAlign: "top",
           },
           line: {
-            padding: "0.25rem 1rem",
+            padding: "0",
+            fontWeight: "normal",
           },
           gutter: {
-            padding: "0.25rem 0.5rem",
-            minWidth: "3rem",
+            padding: "0 10px 0 0",
+            minWidth: "50px",
+            fontWeight: "normal",
           },
           marker: {
-            padding: "0.25rem",
+            padding: "0",
+            display: "none",
           },
           wordDiff: {
             padding: "0",
+            margin: "0",
+            fontWeight: "normal",
+            display: "inline",
+            verticalAlign: "baseline",
+          },
+          contentText: {
+            padding: "0",
+            fontWeight: "normal",
           },
         }}
         hideLineNumbers={false}

@@ -25,12 +25,14 @@ const customVscDarkPlus = {
     fontSize: "0.95rem",
     lineHeight: "1.6",
     fontFamily: "JetBrains Mono, Fira Code, Consolas, monospace",
+    fontWeight: "normal",
   },
   'pre[class*="language-"]': {
     ...vscDarkPlus['pre[class*="language-"]'],
     fontSize: "0.95rem",
     lineHeight: "1.6",
     fontFamily: "JetBrains Mono, Fira Code, Consolas, monospace",
+    fontWeight: "normal",
   },
 };
 
@@ -42,9 +44,16 @@ export function CodeView({ snippet }: CodeViewProps) {
         style={customVscDarkPlus}
         customStyle={{
           margin: 0,
+          padding: 0,
           background: "transparent",
         }}
         showLineNumbers
+        lineNumberStyle={{
+          minWidth: "50px",
+          paddingRight: "10px",
+          textAlign: "right",
+          userSelect: "none",
+        }}
       >
         {snippet.code}
       </SyntaxHighlighter>
