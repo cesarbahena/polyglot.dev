@@ -18,17 +18,31 @@ const languageMap: Record<string, string> = {
   rust: "rust",
 };
 
+const customVscDarkPlus = {
+  ...vscDarkPlus,
+  'code[class*="language-"]': {
+    ...vscDarkPlus['code[class*="language-"]'],
+    fontSize: "0.95rem",
+    lineHeight: "1.6",
+    fontFamily: "JetBrains Mono, Fira Code, Consolas, monospace",
+  },
+  'pre[class*="language-"]': {
+    ...vscDarkPlus['pre[class*="language-"]'],
+    fontSize: "0.95rem",
+    lineHeight: "1.6",
+    fontFamily: "JetBrains Mono, Fira Code, Consolas, monospace",
+  },
+};
+
 export function CodeView({ snippet }: CodeViewProps) {
   return (
     <div className="p-2">
       <SyntaxHighlighter
         language={languageMap[snippet.language.slug] ?? "javascript"}
-        style={vscDarkPlus}
+        style={customVscDarkPlus}
         customStyle={{
           margin: 0,
           background: "transparent",
-          fontSize: "0.95rem",
-          lineHeight: "1.6",
         }}
         showLineNumbers
       >
