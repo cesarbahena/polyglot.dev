@@ -1,0 +1,75 @@
+/**
+ * CSS normalization for code display components
+ * Ensures consistent box model behavior between pre/code and table elements
+ */
+
+.codeDisplay {
+  /* Apply CSS custom properties to the container */
+  font-family: var(--code-font-family);
+  font-size: var(--code-font-size);
+  font-weight: var(--code-font-weight);
+  line-height: var(--code-line-height);
+}
+
+/* Pre element normalization */
+.codeDisplay pre {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-variant-ligatures: none; /* Disable ligatures for consistent character width */
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+}
+
+.codeDisplay code {
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  display: block;
+  padding: 0;
+  margin: 0;
+}
+
+/* Table element normalization */
+.codeDisplay table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  box-sizing: border-box;
+  table-layout: fixed;
+  width: 100%;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+}
+
+.codeDisplay td,
+.codeDisplay th {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  vertical-align: top;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+}
+
+/* Line number column consistency */
+.codeDisplay .line-numbers,
+.codeDisplay [class*="gutter"] {
+  min-width: var(--code-line-number-width);
+  padding-right: var(--code-line-number-padding);
+  text-align: right;
+  user-select: none;
+  color: var(--code-line-number-color);
+}
+
+/* Content area consistency */
+.codeDisplay .code-content {
+  flex: 1;
+  overflow-x: auto;
+}
